@@ -1,0 +1,15 @@
+{
+  "Plugin-Class": "dev.aspect404.rusherhack.bookbot.init",
+  "Name": "RusherMinus",
+  "Version": "${plugin_version}",
+  "Description": "Best RusherHack plugin, insane bypasses to modules with hundreds of settings!",
+  "Authors": [
+    "Aspect404_"
+  ],
+  "Minecraft-Versions": [
+    "1.20.1",
+    "1.20.2",
+    "1.20.3",
+    "1.20.4"
+  ]
+}

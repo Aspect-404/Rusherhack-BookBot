@@ -1,0 +1,69 @@
+plugins {
+    id "fabric-loom" version "1.5-SNAPSHOT"
+    id "maven-publish"
+}
+version = project.plugin_version
+group = project.maven_group
+configurations {
+    rusherhackApi
+    rusherhackApi.canBeResolved(true)
+    compileOnly.extendsFrom(rusherhackApi)
+}
+repositories {
+    maven {
+        name = "rusherhack"
+        url = "https://maven.rusherhack.org/snapshots"
+    }
+    maven {
+        name = "ParchmentMC"
+        url = "https://maven.parchmentmc.org"
+    }
+}
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-1.20.3:2023.12.31@zip")
+    }
+    rusherhackApi "org.rusherhack:rusherhack-api:1.20.4-SNAPSHOT"
+}
+loom {
+//    for (final def f in zipTree(this.project.configurations.rusherhackApi.singleFile)) {
+//        if(f.name == "rusherhack.accesswidener") {
+//            accessWidenerPath = f
+//        }
+//    }
+    runConfigs.configureEach {
+        ideConfigGenerated = false
+    }
+}
+def targetJavaVersion = 17
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = "UTF-8"
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        it.options.release = targetJavaVersion
+    }
+}
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+    archivesBaseName = project.archives_base_name
+}
+jar {
+    manifest {
+        attributes(
+                "Minecraft-Version": project.minecraft_version
+        )
+    }
+}
+
+
+processResources {
+    inputs.property "plugin_version", project.plugin_version
+
+    filesMatching("rusherhack-plugin.json") {
+        expand(plugin_version: project.plugin_version)
+    }
+}
