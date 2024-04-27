@@ -23,8 +23,8 @@ public class BookBot extends ToggleableModule implements IModule {
     private final StringSetting bookName = new StringSetting("Book Name", "Made using BookBot");
     private final NumberSetting<Integer> pages = new NumberSetting<>("Max Pages", "Maximum amount of pages to write per book, some servers have this set to an arbitrary limit.", 10, 1, 100).incremental(5);
 
-    private final StringSetting fileName = new StringSetting("File Name", "example.txt");
-    private final BooleanSetting listFiles = new BooleanSetting("List Files", "Maximum amount of pages to write per book, some servers have this set to an arbitrary limit.", true);
+    private final StringSetting fileName = new StringSetting("File Name", "File name of the file to print to a book.","example.txt");
+    private final BooleanSetting listFiles = new BooleanSetting("List Files", "ls .rusherhack/books/", true);
 
     private final BooleanSetting pastedPages = new BooleanSetting("Pasted Pages", "All pages will contain the same content as if it was pasted.", false);
     private final EnumSetting<CHARACTER_SET> characterSet = new EnumSetting<>("Character Set", "KeySpam will contain common keyboard keys, Ascii will contain a variety of Ascii characters, and Unicode will contain a variety of Unicode", CHARACTER_SET.Ascii);
