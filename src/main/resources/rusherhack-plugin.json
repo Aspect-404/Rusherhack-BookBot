@@ -1,8 +1,8 @@
 {
   "Plugin-Class": "dev.aspect404.rusherhack.bookbot.init",
-  "Name": "RusherMinus",
+  "Name": "DupeUtils",
   "Version": "${plugin_version}",
-  "Description": "Best RusherHack plugin, insane bypasses to modules with hundreds of settings!",
+  "Description": "Contains a bookbot and various dupe methods!",
   "Authors": [
     "Aspect404_"
   ],
