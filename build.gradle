@@ -1,69 +1,60 @@
+import java.time.Instant
+
 plugins {
-    id "fabric-loom" version "1.5-SNAPSHOT"
-    id "maven-publish"
+    id("base")
+    id("fabric-loom").version("1.7.2")
+    id("maven-publish")
 }
-version = project.plugin_version
-group = project.maven_group
+
+def project_name = project.project_name
+def java_version = project.java_version
+def plugin_version = project.plugin_version
+def mappings_version = project.mappings_version
+def minecraft_version = project.minecraft_version
+
+base { archivesName = project_name }
+
 configurations {
     rusherhackApi
-    rusherhackApi.canBeResolved(true)
     compileOnly.extendsFrom(rusherhackApi)
 }
+
 repositories {
-    maven {
-        name = "rusherhack"
-        url = "https://maven.rusherhack.org/snapshots"
-    }
-    maven {
-        name = "ParchmentMC"
-        url = "https://maven.parchmentmc.org"
-    }
+    maven { name = "ParchmentMC"
+        url = "https://maven.parchmentmc.org" }
+    maven { name = "rusherhack"
+        url = "https://maven.rusherhack.org/releases" } //snapshots
 }
+
 dependencies {
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    implementation('org.reflections:reflections:0.9.12')
+    minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.layered() {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-1.20.3:2023.12.31@zip")
+        parchment("org.parchmentmc.data:parchment-1.21:${mappings_version}@zip")
     }
-    rusherhackApi "org.rusherhack:rusherhack-api:1.20.4-SNAPSHOT"
-}
-loom {
-//    for (final def f in zipTree(this.project.configurations.rusherhackApi.singleFile)) {
-//        if(f.name == "rusherhack.accesswidener") {
-//            accessWidenerPath = f
-//        }
-//    }
-    runConfigs.configureEach {
-        ideConfigGenerated = false
-    }
-}
-def targetJavaVersion = 17
-tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = "UTF-8"
-    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-        it.options.release = targetJavaVersion
-    }
-}
-java {
-    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
-    archivesBaseName = project.archives_base_name
-}
-jar {
-    manifest {
-        attributes(
-                "Minecraft-Version": project.minecraft_version
-        )
-    }
+    rusherhackApi("org.rusherhack:rusherhack-api:${minecraft_version}-SNAPSHOT")
 }
 
+loom {
+    for (file in zipTree(this.project.configurations.rusherhackApi.singleFile)) {
+        if (file.name == "rusherhack.accesswidener") accessWidenerPath = file }
+}
+
+java {
+    def currentVersion = JavaVersion.current().getMajorVersion()
+    def requiredVersion = JavaVersion.toVersion(java_version).getMajorVersion()
+    if (currentVersion != requiredVersion)
+        print("Project calls for Java ${java_version} but you are on ${currentVersion}!\n")
+    toolchain.languageVersion = JavaLanguageVersion.of(java_version)
+}
 
 processResources {
-    inputs.property "plugin_version", project.plugin_version
-
     filesMatching("rusherhack-plugin.json") {
-        expand(plugin_version: project.plugin_version)
-    }
+        it.expand(plugin_version: plugin_version, minecraft_version: minecraft_version) }
 }
+
+jar.manifest.attributes(
+        "Minecraft-Version": minecraft_version,
+        "Build-Timestamp": Instant.now().toString()
+)

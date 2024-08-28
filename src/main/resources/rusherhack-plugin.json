@@ -1,8 +1,8 @@
 {
   "Plugin-Class": "dev.aspect404.rusherhack.bookbot.init",
-  "Name": "DupeUtils",
+  "Name": "Bookbot",
   "Version": "${plugin_version}",
-  "Description": "Contains a bookbot and various dupe methods!",
+  "Description": "Write books fast!",
   "Authors": [
     "Aspect404_"
   ],
@@ -10,6 +10,10 @@
     "1.20.1",
     "1.20.2",
     "1.20.3",
-    "1.20.4"
+    "1.20.4",
+    "1.20.5",
+    "1.20.6",
+    "1.21",
+    "1.21.1"
   ]
 }
