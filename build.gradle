@@ -7,8 +7,6 @@ plugins {
 }
 
 def project_name = project.project_name
-def java_version = project.java_version
-def plugin_version = project.plugin_version
 def mappings_version = project.mappings_version
 def minecraft_version = project.minecraft_version
 
@@ -27,31 +25,12 @@ repositories {
 }
 
 dependencies {
-    implementation('org.reflections:reflections:0.9.12')
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.layered() {
         officialMojangMappings()
         parchment("org.parchmentmc.data:parchment-1.21:${mappings_version}@zip")
     }
     rusherhackApi("org.rusherhack:rusherhack-api:${minecraft_version}-SNAPSHOT")
-}
-
-loom {
-    for (file in zipTree(this.project.configurations.rusherhackApi.singleFile)) {
-        if (file.name == "rusherhack.accesswidener") accessWidenerPath = file }
-}
-
-java {
-    def currentVersion = JavaVersion.current().getMajorVersion()
-    def requiredVersion = JavaVersion.toVersion(java_version).getMajorVersion()
-    if (currentVersion != requiredVersion)
-        print("Project calls for Java ${java_version} but you are on ${currentVersion}!\n")
-    toolchain.languageVersion = JavaLanguageVersion.of(java_version)
-}
-
-processResources {
-    filesMatching("rusherhack-plugin.json") {
-        it.expand(plugin_version: plugin_version, minecraft_version: minecraft_version) }
 }
 
 jar.manifest.attributes(
